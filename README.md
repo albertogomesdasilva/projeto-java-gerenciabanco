@@ -1,4 +1,8 @@
 1. Atividade proposta:
+
+<img src="tela-gerencia-banco.png" />
+
+
 Utilizando os principais conceitos do paradigma de Orientação a Objetos, crie uma pequena aplicação de
 gerenciamento bancário que possibilite ao usuário informar seu nome, sobrenome e CPF. Além disso, a
 aplicação deverá possibilitar ao usuário consultar saldo, realizar depositos e saques. Esses
@@ -17,6 +21,7 @@ c) método para exibição do menu.
 5 - Para a exibição do menu, será necessário utilizar uma estrutura de decisão para tratamento das
 escolhas do usuário. Sugere-se utilizar a estrutura do...while e switch..case.
 
+https://albertogomesdasilva.github.io/projeto-java-gerenciabanco/
 
 
 
