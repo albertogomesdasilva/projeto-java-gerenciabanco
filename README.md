@@ -1,6 +1,9 @@
+<hr>
+<div>
+<img src="./tela-gerencia-banco.png" />
+</div>
 1. Atividade proposta:
 
-<img src="tela-gerencia-banco.png" />
 
 
 Utilizando os principais conceitos do paradigma de Orientação a Objetos, crie uma pequena aplicação de
