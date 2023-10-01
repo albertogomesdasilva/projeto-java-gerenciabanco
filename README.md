@@ -75,403 +75,217 @@ Em resumo, a aula prática proporcionou aos alunos uma valiosa experiência de d
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
 
-package br.com.albertogomesdasilva.agenciabancaria;
+package br.com.albertogomesdasilva.gerenciabanco;
 
 /**
  *
  * @author alber
  */
-
-import br.com.albertogomesdasilva.agenciabancaria.Utils;
-
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Scanner;
 
+class ContaBancaria {
+    private String nome;
+    private String sobrenome;
+    private String cpf;
+    private double saldo;
 
-public class AgenciaBancaria {
-
-    static Scanner input = new Scanner(System.in);
-    static ArrayList<Conta> contasBancarias;
-
-    public static void main(String[] args) {
-        contasBancarias = new ArrayList<Conta>();
-        operacoes();
+    public ContaBancaria(String nome, String sobrenome, String cpf) {
+        this.nome = nome;
+        this.sobrenome = sobrenome;
+        this.cpf = cpf;
+        this.saldo = 0.0;
     }
 
-    public static void operacoes() {
+    public String getNomeCompleto() {
+        return nome + " " + sobrenome;
+    }
 
-        System.out.println("------------------------------------------------------");
-        System.out.println("----------- SISTEMA GERÊNCIA BANCO -------------------");
-        System.out.println("------------------------------------------------------");
-        System.out.println("Aluno: Alberto Gomes da Silva-------------------------");
-        System.out.println("Matrícula: 3375090201  -------------------------------");
-        System.out.println("RELATÓRIO DE AULA PRÁTICA-----------------------------");
-        System.out.println("LINGUAGEM ORIENTADA A OBJETOS-------------------------");
-        System.out.println("***** Selecione uma operação que deseja realizar *****");
-        System.out.println("------------------------------------------------------");
+    public String getCpf() {
+        return cpf;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+    public void depositar(double valor) {
+        saldo += valor;
+        System.out.println("Depósito de R$" + valor + " realizado com sucesso.");
+    }
+
+    public boolean sacar(double valor) {
+        if (valor > saldo) {
+            System.out.println("Saldo insuficiente para saque.");
+            return false;
+        } else {
+            saldo -= valor;
+            System.out.println("Saque de R$" + valor + " realizado com sucesso.");
+            return true;
+        }
+    }
+}
+
+public class GerenciaBanco {
+    private static ArrayList<ContaBancaria> contas = new ArrayList<>();
+
+    public static void main(String[] args) {
+        menu();
+    }
+
+    public static void menu() {
+        Scanner input = new Scanner(System.in);
+
         System.out.println("|   Opção 1 - Criar conta                            |");
         System.out.println("|   Opção 2 - Depositar                              |");
         System.out.println("|   Opção 3 - Sacar                                  |");
         System.out.println("|   Opção 4 - Transferir                             |");
-        System.out.println("|   Opção 5 - Listar                                 |");
-        System.out.println("|   Opção 6 - Sair                                   |");
-        System.out.println("------------------------------------------------------");
-        System.out.println("------------------------------------------------------");
-        System.out.println("------------------------------------------------------");
+        System.out.println("|   Opção 5 - Listar contas                          |");
+        System.out.println("|   Opção 6 - Deletar conta                          |");
+        System.out.println("|   Opção 7 - Sair                                   |");
 
-        int operacao = input.nextInt();;
+        System.out.print("Digite uma Opção: ");
+
+        int operacao = input.nextInt();
 
         switch (operacao) {
             case 1:
                 criarConta();
                 break;
-
             case 2:
                 depositar();
                 break;
-
             case 3:
                 sacar();
                 break;
-
             case 4:
                 transferir();
                 break;
-
             case 5:
                 listarContas();
                 break;
-
             case 6:
-                System.out.println("Agradecemos a preferência.");
-                System.exit(0); // para o sistema
-
+                deletarConta();
+                break;
+            case 7:
+                System.out.println("Encerrando o Sistema.");
+                input.close();
+                System.exit(0);
             default:
                 System.out.println("Opção inválida!");
-                operacoes();
                 break;
         }
+
+        menu();
     }
 
     public static void criarConta() {
-        //System.out.println("Você está criando uma conta\n");
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Digite seu Nome: ");
+        String nome = scanner.nextLine();
+        System.out.print("Digite seu Sobrenome: ");
+        String sobrenome = scanner.nextLine();
+        System.out.print("Digite seu CPF: ");
+        String cpf = scanner.nextLine();
 
-        System.out.println("\nNome: ");
-        String nome = input.next();
+        ContaBancaria conta = new ContaBancaria(nome, sobrenome, cpf);
+        contas.add(conta);
 
-        System.out.println("\nCPF: ");
-        String cpf = input.next();
-
-        System.out.println("Email: ");
-        String email = input.next();
-
-        Pessoa cliente = new Pessoa(nome, cpf, email);
-
-        Conta conta = new Conta(cliente);
-
-        contasBancarias.add(conta);
-        System.out.println("--- Sua conta foi criada com sucesso! ---");
-
-        operacoes();
-
-    }
-
-    private static Conta encontrarConta(int numeroConta) {
-        Conta conta = null;
-        if(contasBancarias.size() > 0) {
-            for(Conta contaa : contasBancarias) {
-                if(contaa.getNumeroConta() == numeroConta) {
-                    conta = contaa;
-                }
-            }
-        }
-        return conta;
+        System.out.println("Conta criada com sucesso para: " + conta.getNomeCompleto() + " - CPF: " + conta.getCpf());
     }
 
     public static void depositar() {
-        System.out.println("Número da conta: ");
-        int numeroConta = input.nextInt();
-        Conta conta = encontrarConta(numeroConta);
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Digite o CPF da conta para depositar: ");
+        String cpf = scanner.nextLine();
+        System.out.print("Digite o valor a ser depositado: ");
+        double valor = scanner.nextDouble();
 
-        if(conta != null) {
-            System.out.println("Qual valor deseja depositar? ");
-            Double valorDeposito = input.nextDouble();
+        ContaBancaria conta = encontrarConta(cpf);
 
-            conta.depositar(valorDeposito);
-        }else {
-            System.out.println("--- Conta não encontrada ---");
+        if (conta != null) {
+            conta.depositar(valor);
+        } else {
+            System.out.println("Conta não encontrada para o CPF fornecido.");
         }
-
-        operacoes();
-
     }
 
     public static void sacar() {
-        System.out.println("Número da conta: ");
-        int numeroConta = input.nextInt();
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Digite o CPF da conta para sacar: ");
+        String cpf = scanner.nextLine();
+        System.out.print("Digite o valor a ser sacado: ");
+        double valor = scanner.nextDouble();
 
-        Conta conta = encontrarConta(numeroConta);
+        ContaBancaria conta = encontrarConta(cpf);
 
-        if(conta != null) {
-            System.out.println("Qual valor deseja sacar? ");
-            Double valorSaque = input.nextDouble();
-
-            conta.sacar(valorSaque);
-            System.out.println("--- Saque realizado com sucesso! ---");
-        }else {
-            System.out.println("--- Conta não encontrada ---");
+        if (conta != null && conta.sacar(valor)) {
+            System.out.println("Saque realizado com sucesso.");
+        } else {
+            System.out.println("Operação de saque falhou.");
         }
-
-        operacoes();
-
     }
 
     public static void transferir() {
-        System.out.println("Número da conta que vai enviar a transferência: ");
-        int numeroContaRemetente = input.nextInt();
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Digite o CPF da conta de origem: ");
+        String cpfOrigem = scanner.nextLine();
+        System.out.print("Digite o CPF da conta de destino: ");
+        String cpfDestino = scanner.nextLine();
+        System.out.print("Digite o valor a ser transferido: ");
+        double valor = scanner.nextDouble();
 
-        Conta contaRemetente = encontrarConta(numeroContaRemetente);
+        ContaBancaria contaOrigem = encontrarConta(cpfOrigem);
+        ContaBancaria contaDestino = encontrarConta(cpfDestino);
 
-        if(contaRemetente != null) {
-            System.out.println("Número da conta do destinatário: ");
-            int numeroContaDestinatario = input.nextInt();
-
-            Conta contaDestinatario = encontrarConta(numeroContaDestinatario);
-
-            if(contaDestinatario != null) {
-                System.out.println("Valor da transferência: ");
-                Double valor = input.nextDouble();
-
-                contaRemetente.transferencia(contaDestinatario, valor);
-
-            }else {
-                System.out.println("--- A conta para depósito não foi encontrada ---");
+        if (contaOrigem != null && contaDestino != null) {
+            if (contaOrigem.sacar(valor)) {
+                contaDestino.depositar(valor);
+                System.out.println("Transferência de R$" + valor + " realizada com sucesso.");
+            } else {
+                System.out.println("Transferência falhou. Saldo insuficiente na conta de origem.");
             }
-
-        }else {
-            System.out.println("--- Conta para transferência não encontrada ---");
+        } else {
+            System.out.println("Contas não encontradas para os CPFs fornecidos.");
         }
-        operacoes();
+    }
+
+    public static void deletarConta() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Digite o CPF da conta a ser deletada: ");
+        String cpf = scanner.nextLine();
+
+        Iterator<ContaBancaria> iterator = contas.iterator();
+        while (iterator.hasNext()) {
+            ContaBancaria conta = iterator.next();
+            if (conta.getCpf().equals(cpf) && conta.getSaldo() == 0) {
+                iterator.remove();
+                System.out.println("Conta deletada com sucesso.");
+                return;
+            }
+        }
+
+        System.out.println("Conta não encontrada ou saldo não é zero. Não foi possível deletar.");
     }
 
     public static void listarContas() {
-        if(contasBancarias.size() > 0) {
-            for(Conta conta: contasBancarias) {
-                System.out.println(conta);
+        System.out.println("Listagem de Contas:");
+        for (ContaBancaria conta : contas) {
+            System.out.println(conta.getNomeCompleto() + " - CPF: " + conta.getCpf() + " - Saldo: R$" + conta.getSaldo());
+        }
+    }
+
+    private static ContaBancaria encontrarConta(String cpf) {
+        for (ContaBancaria conta : contas) {
+            if (conta.getCpf().equals(cpf)) {
+                return conta;
             }
-        }else {
-            System.out.println("--- Não há contas cadastradas ---");
+            
         }
-
-        operacoes();
+        return null;
     }
 }
-
-    
-/**
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package br.com.albertogomesdasilva.agenciabancaria;
-
-/**
- *
- * @author alber
- */
-
-
-public class Conta {
-
-    private static int accountCounter = 1;
-
-    private int numeroConta;
-    private Pessoa pessoa;
-    private Double saldo = 0.0;
-
-
-    public Conta(Pessoa pessoa) {
-        this.numeroConta = Conta.accountCounter;
-        this.pessoa = pessoa;
-        this.updateSaldo();
-        Conta.accountCounter += 1;
-    }
-
-
-    public int getNumeroConta() {
-        return numeroConta;
-    }
-    public Pessoa getClient() {
-        return pessoa;
-    }
-    public void setClient(Pessoa pessoa) {
-        this.pessoa = pessoa;
-    }
-    public Double getSaldo() {
-        return saldo;
-    }
-    public void setSaldo(Double saldo) {
-        this.saldo = saldo;
-    }
-
-    private void updateSaldo() {
-        this.saldo = this.getSaldo();
-    }
-
-    public String toString() {
-
-        return "\nBank account: " + this.getNumeroConta() +
-                "\nCliente: " + this.pessoa.getName() +
-                "\nCPF: " + this.pessoa.getCpf() +
-                "\nEmail: " + this.pessoa.getEmail() +
-                "\nSaldo: " + Utils.doubleToString(this.getSaldo()) +
-                "\n" ;
-    }
-
-    public void depositar(Double valor) {
-        if(valor > 0) {
-            setSaldo(getSaldo() + valor);
-            //this.saldo = this.getSaldo() + valor;
-            System.out.println("Seu depósito foi realizado com sucesso!");
-        }else {
-            System.out.println("Não foi possível realizar o depósito!");
-        }
-    }
-
-    public void sacar(Double valor) {
-        if(valor > 0 && this.getSaldo() >= valor) {
-            setSaldo(getSaldo() - valor);
-            System.out.println("Saque realizado com sucesso!");
-        }else {
-            System.out.println("Não foi possível realizar o saque!");
-        }
-    }
-
-    public void transferencia(Conta contaParaDeposito, Double valor) {
-        if(valor > 0 && this.getSaldo() >= valor) {
-            setSaldo(getSaldo() - valor);
-            //this.saldo = this.getSaldo() - valor;
-            contaParaDeposito.saldo = contaParaDeposito.getSaldo() + valor;
-            System.out.println("Transferência realizada com sucesso!");
-        }else {
-            System.out.println("Não foi possível realizar a tranferência");
-        }
-
-    }
-
-}
-
-//****
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package br.com.albertogomesdasilva.agenciabancaria;
-
-/**
- *
- * @author alber
- */
-
-
-
-import java.util.Date;
-
-
-
-public class Pessoa {
-
-   
-    private static int counter = 1;
-
-    private int numeroPessoa ;
-    private String name;
-    private String cpf;
-    private String email;
-    private Date accountCreationDate;
-
-    public Pessoa() { }
-
-    public Pessoa(String name, String cpf, String email) {
-        this.numeroPessoa = Pessoa.counter;
-        this.name = name;
-        this.cpf = cpf;
-        this.email = email;
-        this.accountCreationDate = new Date();
-        Pessoa.counter += 1;
-    }
-
-    public int getNumeroPessoa() {
-        return this.numeroPessoa;
-    }
-
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public String getCpf() {
-        return cpf;
-    }
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    public Date getAccountCreationDate() {
-        return this.accountCreationDate;
-    }
-
-    public String toString() {
-        return  "\nName: " + this.getName() +
-                "\nCPF: " + this.getCpf() +
-                "\nEmail: " + this.getEmail() +
-                "\nAccount Creation Date: " + Utils.dateToString(this.getAccountCreationDate());
-    }
-
-
-} 
-
-/***
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package br.com.albertogomesdasilva.agenciabancaria;
-
-/**
- *
- * @author alber
- */
-
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-public class Utils {
-
-    static NumberFormat formatandoNumeros = new DecimalFormat("R$ #,##0.00");
-    static SimpleDateFormat formatandoData = new SimpleDateFormat("dd/MM/yyyy");
-
-    public static String dateToString(Date data) {
-        return Utils.formatandoData.format(data);
-    }
-
-    public static String doubleToString(Double valor) {
-        return Utils.formatandoNumeros.format(valor);
-    }
-
-}
-
 
 
 
